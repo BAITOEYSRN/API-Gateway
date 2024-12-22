@@ -1,20 +1,16 @@
 package main
 
 import (
+	config "api-gateway"
 	trip "api-gateway/pkg/trip/handler"
 	"log"
-	"os"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/joho/godotenv"
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Printf("Error loading .env file: %s", err)
-	}
+	appPort := config.AppConfig()
 	app := fiber.New()
 
 	// การตั้งค่า CORS ที่ปลอดภัย
@@ -33,6 +29,6 @@ func main() {
 		})
 	})
 	trip.Handlers(app)
-	port := os.Getenv("APP_PORT")
+	port := appPort.Port
 	log.Fatal(app.Listen(port))
 }
