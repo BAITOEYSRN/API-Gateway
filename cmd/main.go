@@ -1,11 +1,20 @@
 package main
 
 import (
+	trip "api-gateway/pkg/trip/handler"
+	"log"
+	"os"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Printf("Error loading .env file: %s", err)
+	}
 	app := fiber.New()
 
 	// การตั้งค่า CORS ที่ปลอดภัย
@@ -16,14 +25,14 @@ func main() {
 		AllowMethods:     "GET,POST,HEAD,PUT,DELETE,PATCH,OPTIONS", // กำหนด HTTP methods ที่อนุญาต
 	}))
 
-	// Route สำหรับตรวจสอบสถานะบริการ
+	// Route
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.Status(200).JSON(fiber.Map{
 			"status":  "ok",
 			"message": "Service is healthy",
 		})
 	})
-
-	// หากต้องการให้แอปฟังพอร์ต
-	app.Listen(":3000")
+	trip.Handlers(app)
+	port := os.Getenv("APP_PORT")
+	log.Fatal(app.Listen(port))
 }
