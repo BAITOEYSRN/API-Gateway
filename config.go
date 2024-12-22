@@ -11,6 +11,7 @@ import (
 
 type ICnf struct {
 	BasePath string
+	Port     string
 }
 
 func AppConfig() ICnf {
@@ -25,5 +26,6 @@ func AppConfig() ICnf {
 	}
 	return ICnf{
 		BasePath: basepath,
+		Port:     os.Getenv("APP_PORT"),
 	}
 }
